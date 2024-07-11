@@ -1,1 +1,8 @@
-spring.application.name=api
+spring:
+  application:
+    name: api
+  datasource:
+    url: jdbc:postgresql://localhost:5433/muvent
+    username: usermv
+    password: test123
+    driver-class-name: org.postgresql.Driver
