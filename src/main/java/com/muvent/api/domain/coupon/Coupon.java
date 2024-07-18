@@ -2,16 +2,14 @@ package com.muvent.api.domain.coupon;
 
 import com.muvent.api.domain.event.Event;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Table(name = "coupon")
 @Entity
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor

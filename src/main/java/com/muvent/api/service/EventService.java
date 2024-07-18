@@ -2,9 +2,9 @@ package com.muvent.api.service;
 
 import com.muvent.api.domain.event.Event;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
+import com.muvent.api.domain.event.dto.EventResponseDTO;
 import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class EventService {
 
     private final EventRepository repository;
 
-    public Event createEvent(EventRequestDTO eventDTO) {
+    public EventResponseDTO createEvent(EventRequestDTO eventDTO) {
         String imgUrl = null;
 
         if (eventDTO.image() != null) {
@@ -38,7 +38,11 @@ public class EventService {
         Event event = EventMapper.toEvent(eventDTO);
         event.setImgUrl(imgUrl);
 
-        return repository.save(event);
+        return EventMapper.toEventResponse(repository.save(event));
+    }
+
+    public Event findEventById(UUID eventId) {
+        return repository.findById(eventId).orElseThrow(() -> new RuntimeException(""));
     }
 
     private String uploadImg(MultipartFile image) {
