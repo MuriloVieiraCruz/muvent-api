@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/events")
 @RequiredArgsConstructor
@@ -21,5 +23,10 @@ public class EventController {
 
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createEvent(eventRequestDTO));
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<EventResponseDTO>> getUpcomingEvents(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getUpcomingEvents(page, size));
     }
 }

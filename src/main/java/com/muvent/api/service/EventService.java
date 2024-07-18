@@ -7,6 +7,9 @@ import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -15,6 +18,8 @@ import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -43,6 +48,14 @@ public class EventService {
 
     public Event findEventById(UUID eventId) {
         return repository.findById(eventId).orElseThrow(() -> new RuntimeException(""));
+    }
+
+    public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Event> eventPage = repository.findByDateAfter(new Date(), pageable);
+        return eventPage.stream()
+                .map(EventMapper::toEventResponse)
+                .toList();
     }
 
     private String uploadImg(MultipartFile image) {
