@@ -1,16 +1,14 @@
 package com.muvent.api.domain.event;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Table(name = "event")
 @Entity
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
