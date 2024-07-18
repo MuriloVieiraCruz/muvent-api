@@ -1,18 +1,15 @@
 package com.muvent.api.config;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3ClientBuilder;
 
 @Configuration
-@PropertySource("classpath:application.yml")
 public class AWSConfig {
 
     @Value("${aws.keys.access_key}")
@@ -22,13 +19,15 @@ public class AWSConfig {
     private String secretKey;
 
     @Bean
-    public AmazonS3 createS3Instance() {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+    public S3Client createS3Instance() {
+        S3ClientBuilder s3ClientBuilder = S3Client.builder().region(Region.US_EAST_1);
 
-        return AmazonS3ClientBuilder
-                .standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_EAST_1)
-                .build();
+        if (!accessKey.isBlank() && !secretKey.isBlank()) {
+            s3ClientBuilder.credentialsProvider(
+                    StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey))
+            );
+        }
+
+        return s3ClientBuilder.build();
     }
 }

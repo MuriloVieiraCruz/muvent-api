@@ -1,28 +1,32 @@
 package com.muvent.api.service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
 import com.muvent.api.domain.event.Event;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.mapper.EventMapper;
+import com.muvent.api.repository.EventRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class EventService {
-
-    private final AmazonS3Client s3Client;
 
     @Value("${aws.bucket.name}")
     private String bucketName;
+
+    private final S3Client s3Client;
+
+    private final EventRepository repository;
 
     public Event createEvent(EventRequestDTO eventDTO) {
         String imgUrl = null;
@@ -34,28 +38,28 @@ public class EventService {
         Event event = EventMapper.toEvent(eventDTO);
         event.setImgUrl(imgUrl);
 
-        return event;
+        return repository.save(event);
     }
 
     private String uploadImg(MultipartFile image) {
         String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
 
         try {
-            File file = this.convertMultipartToFile(image);
-            s3Client.putObject(bucketName, fileName, file);
-            boolean isDeleted = file.delete();
+            PutObjectRequest putObjRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build();
 
-            if (!isDeleted) throw new RuntimeException();
+            s3Client.putObject(putObjRequest, RequestBody.fromByteBuffer(ByteBuffer.wrap(image.getBytes())));
 
-            return s3Client.getUrl(bucketName, fileName).toString();
+            GetUrlRequest request = GetUrlRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build();
+
+            return s3Client.utilities().getUrl(request).toString();
         } catch (Exception e) {
             throw new RuntimeException();
         }
-    }
-
-    private File convertMultipartToFile(MultipartFile multipartFile) throws IOException {
-        File convFile = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        multipartFile.transferTo(convFile);
-        return convFile;
     }
 }

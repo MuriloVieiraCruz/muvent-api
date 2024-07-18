@@ -13,7 +13,7 @@ public class EventMapper {
         return Event.builder()
                 .title(eventDTO.title())
                 .description(eventDTO.description())
-                .imgUrl(eventDTO.image().toString())
+                .imgUrl("")
                 .eventUrl(eventDTO.eventUrl())
                 .date(new Date(eventDTO.date()))
                 .remote(eventDTO.remote())
