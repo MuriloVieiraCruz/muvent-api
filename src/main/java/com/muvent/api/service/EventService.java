@@ -1,6 +1,10 @@
 package com.muvent.api.service;
 
+import com.muvent.api.domain.coupon.Coupon;
+import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
+import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.Event;
+import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
 import com.muvent.api.mapper.EventMapper;
@@ -19,11 +23,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.beans.Transient;
 import java.nio.ByteBuffer;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Year;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +39,8 @@ public class EventService {
     private final EventRepository repository;
 
     private final AddressService addressService;
+
+    private final CouponService couponService;
 
     @Transient
     public EventResponseDTO createEvent(EventRequestDTO eventDTO) {
@@ -64,6 +66,15 @@ public class EventService {
         return repository.findById(eventId).orElseThrow(() -> new RuntimeException(""));
     }
 
+    public DetailedEventResponseDTO getEventDetails(UUID eventId) {
+        Event eventFound = this.findEventById(eventId);
+
+        List<CouponResponseDTO> coupons = couponService.consultCoupons(eventId, LocalDate.now());
+        DetailedEventResponseDTO eventDTO = EventMapper.toDetailedEventResponse(eventFound);
+        eventDTO.couponResponse().addAll(coupons);
+        return eventDTO;
+    }
+
     public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Event> eventPage = repository.findByDateAfter(LocalDate.now(), pageable);
@@ -82,6 +93,11 @@ public class EventService {
         return eventPage.stream()
                 .map(EventMapper::toEventResponse)
                 .toList();
+    }
+
+    public Coupon createCouponByEventId(UUID eventId, CouponRequestDTO couponRequestDTO) {
+        Event event = this.findEventById(eventId);
+        return couponService.createCoupon(event, couponRequestDTO);
     }
 
     private String uploadImg(MultipartFile image) {
@@ -105,6 +121,5 @@ public class EventService {
             throw new RuntimeException();
         }
     }
-
 
 }

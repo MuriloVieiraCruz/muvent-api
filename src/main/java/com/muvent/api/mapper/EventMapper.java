@@ -1,14 +1,14 @@
 package com.muvent.api.mapper;
 
 import com.muvent.api.domain.event.Event;
+import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.ArrayList;
 
 @Component
 public class EventMapper {
@@ -37,6 +37,21 @@ public class EventMapper {
                 event.getRemote(),
                 event.getAddress() != null ? event.getAddress().getCity() : "",
                 event.getAddress() != null ? event.getAddress().getUf() : ""
+        );
+    }
+
+    public static DetailedEventResponseDTO toDetailedEventResponse(Event event) {
+
+        return new DetailedEventResponseDTO(
+                event.getTitle(),
+                event.getDescription(),
+                event.getDate(),
+                event.getImgUrl(),
+                event.getEventUrl(),
+                event.getRemote(),
+                event.getAddress() != null ? event.getAddress().getCity() : "",
+                event.getAddress() != null ? event.getAddress().getUf() : "",
+                new ArrayList<>()
         );
     }
 }
