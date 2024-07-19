@@ -12,6 +12,8 @@ import software.amazon.awssdk.services.s3.S3ClientBuilder;
 @Configuration
 public class AWSConfig {
 
+    //todo implements aws secrets manager
+
     @Value("${aws.keys.access_key}")
     private String accessKey;
 

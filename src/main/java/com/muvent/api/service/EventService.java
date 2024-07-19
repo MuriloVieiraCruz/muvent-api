@@ -17,7 +17,12 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.beans.Transient;
 import java.nio.ByteBuffer;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +38,9 @@ public class EventService {
 
     private final EventRepository repository;
 
+    private final AddressService addressService;
+
+    @Transient
     public EventResponseDTO createEvent(EventRequestDTO eventDTO) {
         String imgUrl = null;
 
@@ -43,7 +51,13 @@ public class EventService {
         Event event = EventMapper.toEvent(eventDTO);
         event.setImgUrl(imgUrl);
 
-        return EventMapper.toEventResponse(repository.save(event));
+        Event response = repository.save(event);
+
+        if (!eventDTO.remote()) {
+            event.setAddress(addressService.createAddress(event, eventDTO));
+        }
+
+        return EventMapper.toEventResponse(response);
     }
 
     public Event findEventById(UUID eventId) {
@@ -52,7 +66,19 @@ public class EventService {
 
     public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Event> eventPage = repository.findByDateAfter(new Date(), pageable);
+        Page<Event> eventPage = repository.findByDateAfter(LocalDate.now(), pageable);
+        return eventPage.stream()
+                .map(EventMapper::toEventResponse)
+                .toList();
+    }
+
+    public List<EventResponseDTO> getFilteredEvents(int page, int size, String title, String city, String uf, LocalDate startDate, LocalDate endDate) {
+
+        startDate =  (startDate != null) ? startDate : LocalDate.now();
+        endDate =  (endDate != null) ? endDate : LocalDate.now().plusYears(5);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Event> eventPage = repository.findFilteredEvents(title, city, uf, startDate, endDate, pageable);
         return eventPage.stream()
                 .map(EventMapper::toEventResponse)
                 .toList();
@@ -79,4 +105,6 @@ public class EventService {
             throw new RuntimeException();
         }
     }
+
+
 }

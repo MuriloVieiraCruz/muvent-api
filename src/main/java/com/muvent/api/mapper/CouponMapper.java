@@ -6,7 +6,8 @@ import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.Event;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
 
 @Component
 public class CouponMapper {
@@ -15,7 +16,7 @@ public class CouponMapper {
         return Coupon.builder()
                 .code(requestDTO.code())
                 .discount(requestDTO.discount())
-                .valid(new Date(requestDTO.valid()))
+                .valid(Instant.ofEpochMilli(requestDTO.valid()).atZone(ZoneId.systemDefault()).toLocalDate())
                 .event(new Event())
                 .build();
     }

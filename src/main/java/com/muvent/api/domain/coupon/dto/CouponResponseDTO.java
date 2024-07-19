@@ -1,13 +1,13 @@
 package com.muvent.api.domain.coupon.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record CouponResponseDTO(
         UUID id,
         String code,
         Integer discount,
-        Date valid
+        LocalDate valid
 
 ) {
 }

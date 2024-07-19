@@ -4,6 +4,7 @@ import com.muvent.api.domain.event.Event;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ public class Coupon {
 
     private Integer discount;
 
-    private Date valid;
+    private LocalDate valid;
 
     @ManyToOne
     @JoinColumn(name = "event_id")

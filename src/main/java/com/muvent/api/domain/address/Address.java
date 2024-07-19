@@ -1,5 +1,6 @@
 package com.muvent.api.domain.address;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muvent.api.domain.event.Event;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,5 +28,6 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "event_id")
+    @JsonIgnore
     private Event event;
 }
