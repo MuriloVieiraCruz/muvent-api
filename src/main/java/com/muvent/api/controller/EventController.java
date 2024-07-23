@@ -7,6 +7,7 @@ import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
 import com.muvent.api.service.EventService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/v1/events")
@@ -23,6 +25,8 @@ import java.util.UUID;
 public class EventController {
 
     private final EventService service;
+
+    private final Logger log = Logger.getLogger(EventController.class.getName());
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<EventResponseDTO> create(
@@ -69,5 +73,14 @@ public class EventController {
     @PostMapping("/coupon/{eventId}")
     public ResponseEntity<Coupon> createCoupon(@PathVariable UUID eventId, @RequestBody CouponRequestDTO couponRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createCouponByEventId(eventId, couponRequestDTO));
+    }
+
+    @GetMapping("/log")
+    public ResponseEntity<String> getDetailedEvents() {
+        log.info("Log test: Initiate ");
+        log.info("Log test: Middle ");
+        log.info("Log test: Middle 2 ");
+        log.info("Log test: Finish ");
+        return ResponseEntity.status(HttpStatus.OK).body("Logging Tests");
     }
 }

@@ -1,0 +1,55 @@
+services:
+  postgres:
+    container_name: muvent
+    image: postgres
+    environment:
+      POSTGRES_USER: usermv
+      POSTGRES_PASSWORD: test123
+      POSTGRES_DB: muvent
+      PG_DATA: /data/postgres
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
+  loki:
+    container_name: muvent_loki
+    image: grafana/loki:main
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
+    ports:
+      - "3100:3100"
+
+  prometheus:
+    container_name: muvent_prometheus
+    image: prom/prometheus:latest
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  tempo:
+    container_name: muvent_tempo
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./docker/tempo/tempo.yml:/etc/tempo.yaml:ro
+      - ./docker/tempo/tempo-data:/tmp/tempo
+    ports:
+      - "3110:3100"  # Tempo
+      - "9411:9411" # zipkin
+
+  grafana:
+    container_name: muvent_grafana
+    image: grafana/grafana:latest
+    volumes:
+      - ./docker/grafana:/etc/grafana/provisioning/datasources:ro
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3000:3000"
+
+volumes:
+  esdata:
+  grafana-storage:
