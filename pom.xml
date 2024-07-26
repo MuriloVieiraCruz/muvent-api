@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>com.github.loki4j</groupId>
 			<artifactId>loki-logback-appender</artifactId>
-			<version>1.3.2</version>
+			<version>1.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -102,6 +102,13 @@
 			<groupId>net.ttddyy.observation</groupId>
 			<artifactId>datasource-micrometer-spring-boot</artifactId>
 			<version>1.0.5</version>
+		</dependency>
+
+		<!-- Config -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-indexer</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>
