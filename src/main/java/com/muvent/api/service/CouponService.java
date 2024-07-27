@@ -5,7 +5,6 @@ import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.Event;
 import com.muvent.api.mapper.CouponMapper;
-import com.muvent.api.mapper.ICouponMapper;
 import com.muvent.api.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class CouponService {
     private final CouponRepository repository;
 
     public Coupon createCoupon(Event event, CouponRequestDTO couponRequestDTO) {
-        Coupon coupon = ICouponMapper.INSTANCE.toCoupon(couponRequestDTO);
+        Coupon coupon = CouponMapper.toCoupon(couponRequestDTO);
         coupon.setEvent(event);
 
         return repository.save(coupon);
@@ -29,7 +28,7 @@ public class CouponService {
 
     public List<CouponResponseDTO> consultCoupons(UUID eventId, LocalDate now) {
         return repository.findByEventIdAndValidAfter(eventId, now).stream()
-                .map(ICouponMapper.INSTANCE::toCouponResponse)
+                .map(CouponMapper::toCouponResponse)
                 .toList();
     }
 }
