@@ -7,7 +7,7 @@ import com.muvent.api.domain.event.Event;
 import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
-import com.muvent.api.mapper.EventMapper;
+import com.muvent.api.mapper.IEventMapper;
 import com.muvent.api.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +50,7 @@ public class EventService {
             imgUrl = this.uploadImg(eventDTO.image());
         }
 
-        Event event = EventMapper.toEvent(eventDTO);
+        Event event = IEventMapper.INSTANCE.toEvent(eventDTO);
         event.setImgUrl(imgUrl);
 
         Event response = repository.save(event);
@@ -59,7 +59,7 @@ public class EventService {
             event.setAddress(addressService.createAddress(event, eventDTO));
         }
 
-        return EventMapper.toEventResponse(response);
+        return IEventMapper.INSTANCE.toEventResponse(response);
     }
 
     public Event findEventById(UUID eventId) {
@@ -70,7 +70,7 @@ public class EventService {
         Event eventFound = this.findEventById(eventId);
 
         List<CouponResponseDTO> coupons = couponService.consultCoupons(eventId, LocalDate.now());
-        DetailedEventResponseDTO eventDTO = EventMapper.toDetailedEventResponse(eventFound);
+        DetailedEventResponseDTO eventDTO = IEventMapper.INSTANCE.toDetailedEventResponse(eventFound);
         eventDTO.couponResponse().addAll(coupons);
         return eventDTO;
     }
@@ -79,7 +79,7 @@ public class EventService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Event> eventPage = repository.findByDateAfter(LocalDate.now(), pageable);
         return eventPage.stream()
-                .map(EventMapper::toEventResponse)
+                .map(IEventMapper.INSTANCE::toEventResponse)
                 .toList();
     }
 
@@ -91,7 +91,7 @@ public class EventService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Event> eventPage = repository.findFilteredEvents(title, city, uf, startDate, endDate, pageable);
         return eventPage.stream()
-                .map(EventMapper::toEventResponse)
+                .map(IEventMapper.INSTANCE::toEventResponse)
                 .toList();
     }
 
