@@ -47,3 +47,13 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "3000:3000"
+
+#  rabbitmq:
+#    container_name: muvent_rabbitmq
+#    image: rabbitmq:management
+#    environment:
+#      - RABBITMQ_DEFAULT_USER=guest
+#      - RABBITMQ_DEFAULT_PASS=guest
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"

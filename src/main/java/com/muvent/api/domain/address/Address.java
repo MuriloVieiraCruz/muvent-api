@@ -1,29 +1,21 @@
 package com.muvent.api.domain.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.muvent.api.domain.BaseEntity;
 import com.muvent.api.domain.event.Event;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.UUID;
-
-@Table(name = "address")
+@Table(name = "tb_address")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Address {
-
-    @Id
-    @GeneratedValue
-    private UUID id;
+@EqualsAndHashCode(callSuper = true)
+public class Address extends BaseEntity {
 
     private String city;
-
     private String uf;
 
     @ManyToOne

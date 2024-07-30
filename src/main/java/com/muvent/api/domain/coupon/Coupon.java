@@ -1,30 +1,24 @@
 package com.muvent.api.domain.coupon;
 
+import com.muvent.api.domain.BaseEntity;
 import com.muvent.api.domain.event.Event;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.UUID;
 
-@Table(name = "coupon")
+@Table(name = "tb_coupon")
 @Entity
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coupon {
-
-    @Id
-    @GeneratedValue
-    private UUID id;
+@EqualsAndHashCode(callSuper = true)
+public class Coupon extends BaseEntity {
 
     private String code;
-
     private Integer discount;
-
     private LocalDate valid;
 
     @ManyToOne
