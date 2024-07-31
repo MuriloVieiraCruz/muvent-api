@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS tb_user (
     password VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
     cpf VARCHAR(14) NOT NULL,
-    birthDate TIMESTAMP NOT NULL,
+    birth_date TIMESTAMP NOT NULL,
     active BOOLEAN DEFAULT true,
     CONSTRAINT uc_email UNIQUE (email),
     CONSTRAINT uc_cpf UNIQUE (cpf)

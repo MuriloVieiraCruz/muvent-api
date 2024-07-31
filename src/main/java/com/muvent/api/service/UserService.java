@@ -5,6 +5,7 @@ import com.muvent.api.domain.user.dto.UserRequestDTO;
 import com.muvent.api.domain.user.dto.UserResponseDTO;
 import com.muvent.api.mapper.UserMapper;
 import com.muvent.api.repository.UserRepository;
+import com.muvent.api.strategy.userStrategies.EmailSenderProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final EmailSenderProducer emailSenderProducer;
     private final UserRepository userRepository;
 
     public void createUser(UserRequestDTO userRequestDTO) {
-        userRepository.save(UserMapper.toUser(userRequestDTO));
+        User user = userRepository.save(UserMapper.toUser(userRequestDTO));
+        emailSenderProducer.send(user);
     }
 
     public UserResponseDTO findUser(String userCpf) {

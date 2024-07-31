@@ -9,6 +9,7 @@ import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
 import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
+import com.muvent.api.strategy.userStrategies.EmailSenderProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -35,20 +36,19 @@ public class EventService {
     private String bucketName;
 
     private final S3Client s3Client;
-
     private final EventRepository repository;
-
     private final AddressService addressService;
-
     private final CouponService couponService;
 
     @Transient
     public EventResponseDTO createEvent(EventRequestDTO eventDTO) {
         String imgUrl = null;
 
-        if (eventDTO.image() != null) {
-            imgUrl = this.uploadImg(eventDTO.image());
-        }
+//        if (eventDTO.image() != null) {
+//            imgUrl = this.uploadImg(eventDTO.image());
+//        }
+
+        imgUrl = "test";
 
         Event event = EventMapper.toEvent(eventDTO);
         event.setImgUrl(imgUrl);
