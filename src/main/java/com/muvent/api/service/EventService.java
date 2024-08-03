@@ -9,7 +9,6 @@ import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
 import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
-import com.muvent.api.strategy.userStrategies.EmailSenderProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

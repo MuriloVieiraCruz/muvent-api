@@ -74,12 +74,4 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createCouponByEventId(eventId, couponRequestDTO));
     }
 
-    @GetMapping("/log")
-    public ResponseEntity<String> getDetailedEvents() {
-        log.info("Log test: Initiate ");
-        log.info("Log test: Middle ");
-        log.info("Log test: Middle 2 ");
-        log.info("Log test: Finish ");
-        return ResponseEntity.status(HttpStatus.OK).body("Logging Tests");
-    }
 }
