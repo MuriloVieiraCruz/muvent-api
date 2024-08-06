@@ -1,5 +1,7 @@
 package com.muvent.api.controller;
 
+import com.muvent.api.domain.orderTicket.dto.OrderTicketRequestDTO;
+import com.muvent.api.domain.orderTicket.dto.OrderTicketResponseDTO;
 import com.muvent.api.domain.ticket.dto.TicketRequestDTO;
 import com.muvent.api.domain.ticket.dto.TicketResponseDTO;
 import com.muvent.api.domain.user.dto.UserResponseDTO;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -38,6 +41,23 @@ public class TicketController {
     @DeleteMapping("/{ticketId}")
     public ResponseEntity<Void> deleteTicket(@PathVariable UUID ticketId) {
         ticketService.deleteTicket(ticketId);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @PostMapping("/order")
+    public ResponseEntity<Void> createOrderTicket(@RequestBody @Valid OrderTicketRequestDTO orderTicketRequestDTO) {
+        ticketService.createOrder(orderTicketRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<OrderTicketResponseDTO> findOrderTicket(@PathVariable UUID orderId) {
+        return ResponseEntity.status(HttpStatus.OK).body(ticketService.findOrderTicket(orderId));
+    }
+
+    @DeleteMapping("/order/{orderId}")
+    public ResponseEntity<Void> deleteOrderTicket(@PathVariable UUID orderId) {
+        ticketService.deleteOrderTicket(orderId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

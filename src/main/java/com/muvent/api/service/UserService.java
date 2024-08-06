@@ -9,6 +9,8 @@ import com.muvent.api.strategy.userStrategies.EmailSenderProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -33,13 +35,17 @@ public class UserService {
         return UserMapper.toUserResponseDTO(user2);
     }
 
-    private User findByCpf(String userCpf) {
-        return userRepository.findByCpf(userCpf).orElseThrow(() -> new RuntimeException("Test Error"));
+    public User findUserById(UUID userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Test Error"));
     }
 
     public void deleteUser(String userCpf) {
         User user = findByCpf(userCpf);
         user.setActive(false);
         userRepository.save(user);
+    }
+
+    private User findByCpf(String userCpf) {
+        return userRepository.findByCpf(userCpf).orElseThrow(() -> new RuntimeException("Test Error"));
     }
 }

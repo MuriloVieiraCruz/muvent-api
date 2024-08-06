@@ -17,18 +17,22 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CouponService {
 
-    private final CouponRepository repository;
+    private final CouponRepository couponRepository;
 
     public Coupon createCoupon(Event event, CouponRequestDTO couponRequestDTO) {
         Coupon coupon = CouponMapper.toCoupon(couponRequestDTO);
         coupon.setEvent(event);
 
-        return repository.save(coupon);
+        return couponRepository.save(coupon);
     }
 
     public List<CouponResponseDTO> consultCoupons(UUID eventId, LocalDate now) {
-        return repository.findByEventIdAndValidAfter(eventId, now).stream()
+        return couponRepository.findByEventIdAndValidAfter(eventId, now).stream()
                 .map(CouponMapper::toCouponResponse)
                 .toList();
+    }
+
+    public Long getCouponDiscount(UUID couponId, LocalDate now) {
+        return couponRepository.findByIdAndValidAfter(couponId, now).orElseThrow(() -> new RuntimeException("Test Coupon"));
     }
 }

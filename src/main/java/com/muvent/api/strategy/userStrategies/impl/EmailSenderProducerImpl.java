@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EmailSenderProducerImpl implements EmailSenderProducer {
 
+    //The @Qualifier annotation can be used for separate de bean for each queue
+    //To send the message, you can use the method convertAndSend(Queue name, Object value);
+
     private final AmqpTemplate amqpTemplate;
     private final ObjectMapper objectMapper;
 
@@ -29,6 +32,7 @@ public class EmailSenderProducerImpl implements EmailSenderProducer {
             );
         } catch (JsonProcessingException e) {
             System.out.println(e.getMessage());
+            throw new RuntimeException("Test Error");
         }
     }
 

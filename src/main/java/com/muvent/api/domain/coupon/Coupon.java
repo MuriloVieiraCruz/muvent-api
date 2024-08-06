@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class Coupon extends BaseEntity {
 
     private String code;
-    private Integer discount;
+    private Long discount;
     private LocalDate valid;
 
     @ManyToOne

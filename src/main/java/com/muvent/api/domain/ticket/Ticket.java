@@ -20,6 +20,7 @@ public class Ticket extends BaseEntity {
     private Long price;
     private Long quantity;
     private LocalDate date;
+    private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "event_id")

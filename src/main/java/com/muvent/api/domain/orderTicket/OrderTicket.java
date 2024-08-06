@@ -3,13 +3,12 @@ package com.muvent.api.domain.orderTicket;
 import com.muvent.api.domain.BaseEntity;
 import com.muvent.api.domain.ticket.Ticket;
 import com.muvent.api.domain.user.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Table(name = "tb_order_ticket")
 @Entity
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,10 +18,13 @@ public class OrderTicket extends BaseEntity {
 
     private Long totalAmount;
     private Long quantity;
+    private boolean active;
 
-    @OneToMany
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany
+    @ManyToOne
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 }
