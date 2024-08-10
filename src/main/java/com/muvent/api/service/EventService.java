@@ -5,8 +5,10 @@ import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.Event;
 import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
+import com.muvent.api.domain.event.dto.EventFilterDTO;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
+import com.muvent.api.mapper.CouponMapper;
 import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +45,9 @@ public class EventService {
     public EventResponseDTO createEvent(EventRequestDTO eventDTO) {
         String imgUrl = null;
 
-//        if (eventDTO.image() != null) {
-//            imgUrl = this.uploadImg(eventDTO.image());
-//        }
-
-        imgUrl = "test";
+        if (eventDTO.image() != null) {
+            imgUrl = eventDTO.image().getOriginalFilename();
+        }
 
         Event event = EventMapper.toEvent(eventDTO);
         event.setImgUrl(imgUrl);
@@ -82,21 +82,27 @@ public class EventService {
                 .toList();
     }
 
-    public List<EventResponseDTO> getFilteredEvents(int page, int size, String title, String city, String uf, LocalDate startDate, LocalDate endDate) {
+    public List<EventResponseDTO> getFilteredEvents(EventFilterDTO eventFilterDTO) {
 
-        startDate =  (startDate != null) ? startDate : LocalDate.now();
-        endDate =  (endDate != null) ? endDate : LocalDate.now().plusYears(5);
+        LocalDate startDate =  (eventFilterDTO.startDate() != null) ?
+                eventFilterDTO.startDate() : LocalDate.now();
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Event> eventPage = repository.findFilteredEvents(title, city, uf, startDate, endDate, pageable);
-        return eventPage.stream()
+        LocalDate endDate =  (eventFilterDTO.endDate() != null) ?
+                eventFilterDTO.endDate() : LocalDate.now().plusYears(5);
+
+        Pageable pageable = PageRequest.of(eventFilterDTO.page(), eventFilterDTO.size());
+        Page<Event> eventPage = repository.findFilteredEvents(
+                eventFilterDTO.title(), eventFilterDTO.city(), eventFilterDTO.uf(), startDate, endDate, pageable
+        );
+
+        return eventPage.stream().parallel()
                 .map(EventMapper::toEventResponse)
                 .toList();
     }
 
-    public Coupon createCouponByEventId(UUID eventId, CouponRequestDTO couponRequestDTO) {
+    public CouponResponseDTO createCouponByEventId(UUID eventId, CouponRequestDTO couponRequestDTO) {
         Event event = this.findEventById(eventId);
-        return couponService.createCoupon(event, couponRequestDTO);
+        return CouponMapper.toCouponResponse(couponService.createCoupon(event, couponRequestDTO));
     }
 
     private String uploadImg(MultipartFile image) {

@@ -2,6 +2,7 @@ package com.muvent.api.controller;
 
 import com.muvent.api.domain.user.dto.UserRequestDTO;
 import com.muvent.api.domain.user.dto.UserResponseDTO;
+import com.muvent.api.domain.user.dto.UserUpdateDTO;
 import com.muvent.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +24,13 @@ public class UserController {
     }
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<UserResponseDTO> findUserBy(@PathVariable String userCpf) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findUser(userCpf));
+    public ResponseEntity<UserResponseDTO> findUserBy(@PathVariable String cpf) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findUser(cpf));
     }
 
     @PutMapping("/{cpf}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String cpf, @RequestBody @Valid UserRequestDTO userRequestDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(cpf, userRequestDTO));
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String cpf, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(cpf, userUpdateDTO));
     }
 
     @DeleteMapping("/{cpf}")
