@@ -1,5 +1,6 @@
 package com.muvent.api.service;
 
+import com.muvent.api.domain.event.Event;
 import com.muvent.api.domain.orderTicket.dto.OrderTicketRequestDTO;
 import com.muvent.api.domain.orderTicket.dto.OrderTicketResponseDTO;
 import com.muvent.api.domain.ticket.Ticket;
@@ -9,6 +10,7 @@ import com.muvent.api.domain.user.User;
 import com.muvent.api.mapper.TicketMapper;
 import com.muvent.api.repository.TicketRepository;
 import com.muvent.api.strategy.ticketStrategies.UpdateTicketFields;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,21 +24,30 @@ public class TicketService {
     private final UserService userService;
     private final OrderTicketService orderTicketService;
     private final UpdateTicketFields updateTicketFields;
+    private final EventService eventService;
 
-    public void createTicket(TicketRequestDTO ticketRequestDto) {
-        ticketRepository.save(TicketMapper.toTicket(ticketRequestDto));
+    @Transactional
+    public TicketResponseDTO createTicket(TicketRequestDTO ticketRequestDto) {
+
+        Event eventFound = eventService.findEventById(ticketRequestDto.eventId());
+
+        Ticket ticket = TicketMapper.toTicket(ticketRequestDto);
+        ticket.setEvent(eventFound);
+        return TicketMapper.toTicketResponse(ticketRepository.save(ticket));
     }
 
     public TicketResponseDTO findTicket(UUID ticketId) {
         return TicketMapper.toTicketResponse(findTicketById(ticketId));
     }
 
+    @Transactional
     public TicketResponseDTO updateTicket(UUID ticketId, TicketRequestDTO ticketRequestDto) {
         Ticket ticket = findTicketById(ticketId);
         updateTicketFields.validate(ticket,ticketRequestDto);
         return TicketMapper.toTicketResponse(ticket);
     }
 
+    @Transactional
     public void deleteTicket(UUID ticketId) {
         Ticket ticketFound = findTicketById(ticketId);
         ticketFound.setActive(false);
@@ -47,13 +58,18 @@ public class TicketService {
         return ticketRepository.findById(ticketId).orElseThrow(() -> new RuntimeException("Test"));
     }
 
-    public void createOrder(OrderTicketRequestDTO orderTicketRequestDTO) {
+    @Transactional
+    public OrderTicketResponseDTO createOrder(OrderTicketRequestDTO orderTicketRequestDTO) {
         Ticket ticketFound = findTicketById(orderTicketRequestDTO.ticketId());
-        ticketFound.setQuantity(ticketFound.getQuantity() - orderTicketRequestDTO.quantity());
 
+        if (orderTicketRequestDTO.quantity() > ticketFound.getQuantity()) {
+            throw new RuntimeException("Test error quantity");
+        }
+
+        ticketFound.setQuantity(ticketFound.getQuantity() - orderTicketRequestDTO.quantity());
         User userFound = userService.findUserById(orderTicketRequestDTO.userId());
 
-        orderTicketService.createTicketOrder(ticketFound, userFound, orderTicketRequestDTO);
+        return orderTicketService.createTicketOrder(ticketFound, userFound, orderTicketRequestDTO);
     }
 
     public OrderTicketResponseDTO findOrderTicket(UUID orderId) {

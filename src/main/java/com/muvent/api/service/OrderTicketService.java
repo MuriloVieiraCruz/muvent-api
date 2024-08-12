@@ -19,7 +19,7 @@ public class OrderTicketService {
     private final OrderTicketRepository orderTicketRepository;
     private final CouponService couponService;
 
-    public void createTicketOrder(Ticket ticketFound, User userFound, OrderTicketRequestDTO orderTicketRequestDTO) {
+    public OrderTicketResponseDTO createTicketOrder(Ticket ticketFound, User userFound, OrderTicketRequestDTO orderTicketRequestDTO) {
         long totalAmount = ticketFound.getPrice() * orderTicketRequestDTO.quantity();
 
         if (orderTicketRequestDTO.couponId() != null) {
@@ -35,7 +35,7 @@ public class OrderTicketService {
                 .ticket(ticketFound)
                 .build();
 
-        orderTicketRepository.save(orderTicket);
+        return OrderTicketMapper.toOrderTicketResponse(orderTicketRepository.save(orderTicket));
     }
 
     public OrderTicketResponseDTO findOrderTicket(UUID orderId) {

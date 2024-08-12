@@ -20,6 +20,7 @@ public class TicketMapper {
 
     public static TicketResponseDTO toTicketResponse(Ticket ticket) {
         return new TicketResponseDTO(
+                ticket.getId(),
                 ticket.getPrice(),
                 ticket.getQuantity(),
                 ticket.getDate(),

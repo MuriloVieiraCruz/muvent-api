@@ -16,6 +16,7 @@ public record OrderTicketRequestDTO(
 
         @NotNull(message = "The ticket id is required")
         UUID ticketId,
+
         UUID couponId
 ) {
 }
