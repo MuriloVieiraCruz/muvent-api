@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -23,19 +25,19 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{cpf}")
-    public ResponseEntity<UserResponseDTO> findUserBy(@PathVariable String cpf) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findUser(cpf));
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponseDTO> findUserBy(@PathVariable UUID userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findUser(userId));
     }
 
-    @PutMapping("/{cpf}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String cpf, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(cpf, userUpdateDTO));
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable UUID userId, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userId, userUpdateDTO));
     }
 
-    @DeleteMapping("/{cpf}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String cpf) {
-        userService.deleteUser(cpf);
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+        userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

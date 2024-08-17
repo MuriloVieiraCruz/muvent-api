@@ -9,6 +9,8 @@ import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
 import com.muvent.api.service.EventService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

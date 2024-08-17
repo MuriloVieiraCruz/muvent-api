@@ -1,5 +1,6 @@
 package com.muvent.api.domain.coupon.dto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -9,5 +10,5 @@ public record CouponResponseDTO(
         Integer discount,
         LocalDate valid
 
-) {
+) implements Serializable {
 }

@@ -3,6 +3,7 @@ package com.muvent.api.domain.orderTicket.dto;
 import com.muvent.api.domain.ticket.dto.TicketResponseDTO;
 import com.muvent.api.domain.user.dto.UserResponseDTO;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 public record OrderTicketResponseDTO(
@@ -11,5 +12,5 @@ public record OrderTicketResponseDTO(
         Long quantity,
         UserResponseDTO userResponseDTO,
         TicketResponseDTO ticketResponseDTO
-) {
+) implements Serializable {
 }

@@ -6,6 +6,8 @@ import com.muvent.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Table(name = "tb_order_ticket")
 @Entity
 @Builder
@@ -14,7 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class OrderTicket extends BaseEntity {
+public class OrderTicket extends BaseEntity implements Serializable {
 
     private Long totalAmount;
     private Long quantity;

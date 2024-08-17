@@ -12,6 +12,9 @@ import com.muvent.api.repository.TicketRepository;
 import com.muvent.api.strategy.ticketStrategies.UpdateTicketFields;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -36,11 +39,13 @@ public class TicketService {
         return TicketMapper.toTicketResponse(ticketRepository.save(ticket));
     }
 
+    @Cacheable(value = "tickets", key = "#ticketId")
     public TicketResponseDTO findTicket(UUID ticketId) {
         return TicketMapper.toTicketResponse(findTicketById(ticketId));
     }
 
     @Transactional
+    @CachePut(value = "tickets", key = "#ticketId")
     public TicketResponseDTO updateTicket(UUID ticketId, TicketRequestDTO ticketRequestDto) {
         Ticket ticket = findTicketById(ticketId);
         updateTicketFields.validate(ticket,ticketRequestDto);
@@ -48,6 +53,7 @@ public class TicketService {
     }
 
     @Transactional
+    @CacheEvict(value = "tickets", key = "#ticketId", beforeInvocation = true)
     public void deleteTicket(UUID ticketId) {
         Ticket ticketFound = findTicketById(ticketId);
         ticketFound.setActive(false);
@@ -72,10 +78,13 @@ public class TicketService {
         return orderTicketService.createTicketOrder(ticketFound, userFound, orderTicketRequestDTO);
     }
 
+    @Cacheable(value = "orders", key = "#orderId")
     public OrderTicketResponseDTO findOrderTicket(UUID orderId) {
         return orderTicketService.findOrderTicket(orderId);
     }
 
+    @Transactional
+    @CacheEvict(value = "orders", key = "#orderId", beforeInvocation = true)
     public void deleteOrderTicket(UUID orderId) {
         orderTicketService.deleteOrderTicket(orderId);
     }

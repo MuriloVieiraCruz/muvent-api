@@ -1,6 +1,5 @@
 package com.muvent.api.service;
 
-import com.muvent.api.domain.coupon.Coupon;
 import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.Event;
@@ -13,6 +12,8 @@ import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -65,6 +66,7 @@ public class EventService {
         return repository.findById(eventId).orElseThrow(() -> new RuntimeException(""));
     }
 
+    @Cacheable(value = "events", key = "#eventId")
     public DetailedEventResponseDTO getEventDetails(UUID eventId) {
         Event eventFound = this.findEventById(eventId);
 
@@ -74,6 +76,7 @@ public class EventService {
         return eventDTO;
     }
 
+    @Cacheable(value = "events")
     public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Event> eventPage = repository.findByDateAfter(LocalDate.now(), pageable);
@@ -82,6 +85,7 @@ public class EventService {
                 .toList();
     }
 
+    @Cacheable(value = "events")
     public List<EventResponseDTO> getFilteredEvents(EventFilterDTO eventFilterDTO) {
 
         LocalDate startDate =  (eventFilterDTO.startDate() != null) ?

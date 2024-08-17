@@ -5,6 +5,7 @@ import com.muvent.api.domain.event.Event;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Table(name = "tb_coupon")
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Coupon extends BaseEntity {
+public class Coupon extends BaseEntity implements Serializable {
 
     private String code;
     private Integer discount;

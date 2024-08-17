@@ -10,6 +10,9 @@ import com.muvent.api.strategy.userStrategies.EmailSenderProducer;
 import com.muvent.api.strategy.userStrategies.UserUpdateValidation;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -28,13 +31,15 @@ public class UserService {
         emailSenderProducer.send(user);
     }
 
-    public UserResponseDTO findUser(String userCpf) {
-        return UserMapper.toUserResponseDTO(findByCpf(userCpf));
+    @Cacheable(value = "users", key = "#userId")
+    public UserResponseDTO findUser(UUID userId) {
+        return UserMapper.toUserResponseDTO(findUserById(userId));
     }
 
     @Transactional
-    public UserResponseDTO updateUser(String userCpf, UserUpdateDTO userUpdateDTO) {
-        User user = findByCpf(userCpf);
+    @CachePut(value = "users", key = "#userId")
+    public UserResponseDTO updateUser(UUID userId, UserUpdateDTO userUpdateDTO) {
+        User user = findUserById(userId);
         userUpdateValidation.validate(user, userUpdateDTO);
 
         return UserMapper.toUserResponseDTO(userRepository.save(user));
@@ -45,13 +50,11 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(String userCpf) {
-        User user = findByCpf(userCpf);
+    @CacheEvict(value = "users", key = "#userId", beforeInvocation = true)
+    public void deleteUser(UUID userId) {
+        User user = findUserById(userId);
         user.setActive(false);
         userRepository.save(user);
     }
 
-    private User findByCpf(String userCpf) {
-        return userRepository.findByCpf(userCpf).orElseThrow(() -> new RuntimeException("Test Error"));
-    }
 }

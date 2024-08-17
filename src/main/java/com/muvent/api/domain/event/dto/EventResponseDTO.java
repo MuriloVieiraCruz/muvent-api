@@ -1,9 +1,10 @@
 package com.muvent.api.domain.event.dto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record EventResponseDTO(
+public record EventResponseDTO  (
         UUID id,
         String title,
         String description,
@@ -13,5 +14,5 @@ public record EventResponseDTO(
         Boolean remote,
         String city,
         String uf
-) {
+) implements Serializable {
 }
