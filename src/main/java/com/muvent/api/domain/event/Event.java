@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Table(name = "tb_event")
 @Entity
@@ -23,7 +23,8 @@ public class Event extends BaseEntity implements Serializable {
     private String imgUrl;
     private String eventUrl;
     private Boolean remote;
-    private LocalDate date;
+    private LocalDateTime initialDate;
+    private LocalDateTime finalDate;
 
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
     private Address address;

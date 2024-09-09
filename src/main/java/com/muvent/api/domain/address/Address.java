@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 @Table(name = "tb_address")
 @Entity
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,8 +18,13 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 public class Address extends BaseEntity implements Serializable {
 
+    private String neighborhood;
     private String city;
     private String uf;
+    private String patio;
+    private String zipCode;
+    private String number;
+    private String complement;
 
     @ManyToOne
     @JoinColumn(name = "event_id")

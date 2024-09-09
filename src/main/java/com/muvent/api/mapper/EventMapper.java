@@ -7,6 +7,7 @@ import com.muvent.api.domain.event.dto.EventResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
@@ -20,7 +21,8 @@ public class EventMapper {
                 .description(eventDTO.description())
                 .imgUrl("")
                 .eventUrl(eventDTO.eventUrl())
-                .date(Instant.ofEpochMilli(eventDTO.date()).atZone(ZoneId.systemDefault()).toLocalDate())
+                .initialDate(LocalDateTime.ofInstant(Instant.ofEpochMilli(eventDTO.initialDateTime()), ZoneId.systemDefault()))
+                .finalDate(LocalDateTime.ofInstant(Instant.ofEpochMilli(eventDTO.finalDateTime()), ZoneId.systemDefault()))
                 .remote(eventDTO.remote())
                 .build();
     }
@@ -31,7 +33,8 @@ public class EventMapper {
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getDate(),
+                event.getInitialDate(),
+                event.getFinalDate(),
                 event.getImgUrl(),
                 event.getEventUrl(),
                 event.getRemote(),
@@ -45,7 +48,8 @@ public class EventMapper {
         return new DetailedEventResponseDTO(
                 event.getTitle(),
                 event.getDescription(),
-                event.getDate(),
+                event.getInitialDate(),
+                event.getFinalDate(),
                 event.getImgUrl(),
                 event.getEventUrl(),
                 event.getRemote(),

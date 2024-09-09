@@ -29,6 +29,7 @@ import java.beans.Transient;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +59,7 @@ public class EventService {
         Event response = repository.save(event);
 
         if (!eventDTO.remote()) {
-            event.setAddress(addressService.createAddress(event, eventDTO));
+            event.setAddress(addressService.createAddress(event, eventDTO.addressRequestDTO()));
         }
 
         return EventMapper.toEventResponse(response);
@@ -81,7 +82,7 @@ public class EventService {
     @Cacheable(value = "events")
     public List<EventResponseDTO> getUpcomingEvents(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Event> eventPage = repository.findByDateAfter(LocalDate.now(), pageable);
+        Page<Event> eventPage = repository.findByInitialDateAfter(LocalDateTime.now(), pageable);
         return eventPage.stream()
                 .map(EventMapper::toEventResponse)
                 .toList();
@@ -90,11 +91,11 @@ public class EventService {
     @Cacheable(value = "events")
     public List<EventResponseDTO> getFilteredEvents(EventFilterDTO eventFilterDTO) {
 
-        LocalDate startDate =  (eventFilterDTO.startDate() != null) ?
-                eventFilterDTO.startDate() : LocalDate.now();
+        LocalDateTime startDate =  (eventFilterDTO.startDate() != null) ?
+                eventFilterDTO.startDate() : LocalDateTime.now();
 
-        LocalDate endDate =  (eventFilterDTO.endDate() != null) ?
-                eventFilterDTO.endDate() : LocalDate.now().plusYears(5);
+        LocalDateTime endDate =  (eventFilterDTO.endDate() != null) ?
+                eventFilterDTO.endDate() : LocalDateTime.now().plusYears(5);
 
         Pageable pageable = PageRequest.of(eventFilterDTO.page(), eventFilterDTO.size());
         Page<Event> eventPage = repository.findFilteredEvents(

@@ -21,7 +21,7 @@ import java.util.Map;
 
 @ControllerAdvice
 @RestControllerAdvice
-public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -59,7 +59,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public Map<String, Map<String, Object>> handle(MethodArgumentTypeMismatchException matme){
-        return createErrorMap(ApiError.INVALID_TYPE_PARAMETER, "A URI possui valores inválidos");
+        return createErrorMap(ApiError.INVALID_TYPE_PARAMETER, "The URI has invalid values");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

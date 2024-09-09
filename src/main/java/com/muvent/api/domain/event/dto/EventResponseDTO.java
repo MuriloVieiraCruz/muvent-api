@@ -1,18 +1,21 @@
 package com.muvent.api.domain.event.dto;
 
+import com.muvent.api.domain.address.dto.AddressResponseDTO;
+
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record EventResponseDTO  (
         UUID id,
         String title,
         String description,
-        LocalDate date,
+        LocalDateTime initialDate,
+        LocalDateTime finalDate,
         String imgUrl,
         String eventUrl,
         Boolean remote,
-        String city,
-        String uf
+        AddressResponseDTO addressResponseDTO
 ) implements Serializable {
 }

@@ -9,25 +9,26 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
-    Page<Event> findByDateAfter(LocalDate date, Pageable pageable);
+    Page<Event> findByInitialDateAfter(LocalDateTime date, Pageable pageable);
 
     @Query("SELECT e FROM Event e "
             + "LEFT JOIN e.address a "
             + "WHERE (:title IS NULL OR e.title LIKE %:title%) "
             + "AND (:city IS NULL OR a.city LIKE %:city%) "
             + "AND (:uf IS NULL OR a.uf LIKE %:uf%) "
-            + "AND (e.date >= :startDate AND e.date <= :endDate)")
+            + "AND (e.initialDate >= :startDate AND e.finalDate <= :endDate)")
     Page<Event> findFilteredEvents(
             @Param("title") String title,
             @Param("city") String city,
             @Param("uf") String uf,
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
             Pageable pageable
     );
 }

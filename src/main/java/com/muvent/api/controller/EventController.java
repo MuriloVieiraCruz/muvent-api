@@ -1,6 +1,5 @@
 package com.muvent.api.controller;
 
-import com.muvent.api.domain.coupon.Coupon;
 import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
@@ -8,9 +7,8 @@ import com.muvent.api.domain.event.dto.EventFilterDTO;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
 import com.muvent.api.service.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +26,7 @@ public class EventController {
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<EventResponseDTO> create(
-            @ModelAttribute EventRequestDTO eventRequestDTO
+            @ModelAttribute @Valid EventRequestDTO eventRequestDTO
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createEvent(eventRequestDTO));
     }
