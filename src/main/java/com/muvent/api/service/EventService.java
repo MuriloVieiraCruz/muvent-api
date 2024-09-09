@@ -7,12 +7,13 @@ import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
 import com.muvent.api.domain.event.dto.EventFilterDTO;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
+import com.muvent.api.exception.EventImageBucketException;
+import com.muvent.api.exception.EventNotFoundException;
 import com.muvent.api.mapper.CouponMapper;
 import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +26,7 @@ import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.beans.Transient;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.util.List;
@@ -63,7 +65,7 @@ public class EventService {
     }
 
     public Event findEventById(UUID eventId) {
-        return repository.findById(eventId).orElseThrow(() -> new RuntimeException(""));
+        return repository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found!"));
     }
 
     @Cacheable(value = "events", key = "#eventId")
@@ -126,8 +128,8 @@ public class EventService {
                     .build();
 
             return s3Client.utilities().getUrl(request).toString();
-        } catch (Exception e) {
-            throw new RuntimeException();
+        } catch (IOException e) {
+            throw new EventImageBucketException(e.getMessage());
         }
     }
 

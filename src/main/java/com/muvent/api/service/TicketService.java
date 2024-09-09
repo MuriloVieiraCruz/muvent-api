@@ -7,6 +7,8 @@ import com.muvent.api.domain.ticket.Ticket;
 import com.muvent.api.domain.ticket.dto.TicketRequestDTO;
 import com.muvent.api.domain.ticket.dto.TicketResponseDTO;
 import com.muvent.api.domain.user.User;
+import com.muvent.api.exception.InsufficientTicketsException;
+import com.muvent.api.exception.TicketNotFoundException;
 import com.muvent.api.mapper.TicketMapper;
 import com.muvent.api.repository.TicketRepository;
 import com.muvent.api.strategy.ticketStrategies.UpdateTicketFields;
@@ -61,7 +63,7 @@ public class TicketService {
     }
 
     private Ticket findTicketById(UUID ticketId) {
-        return ticketRepository.findById(ticketId).orElseThrow(() -> new RuntimeException("Test"));
+        return ticketRepository.findById(ticketId).orElseThrow(() -> new TicketNotFoundException("Test"));
     }
 
     @Transactional
@@ -69,13 +71,13 @@ public class TicketService {
         Ticket ticketFound = findTicketById(orderTicketRequestDTO.ticketId());
 
         if (orderTicketRequestDTO.quantity() > ticketFound.getQuantity()) {
-            throw new RuntimeException("Test error quantity");
+            throw new InsufficientTicketsException("Not enough tickets available");
         }
 
         ticketFound.setQuantity(ticketFound.getQuantity() - orderTicketRequestDTO.quantity());
         User userFound = userService.findUserById(orderTicketRequestDTO.userId());
 
-        return orderTicketService.createTicketOrder(ticketFound, userFound, orderTicketRequestDTO);
+        return orderTicketService.createOrderTicket(ticketFound, userFound, orderTicketRequestDTO);
     }
 
     @Cacheable(value = "orders", key = "#orderId")

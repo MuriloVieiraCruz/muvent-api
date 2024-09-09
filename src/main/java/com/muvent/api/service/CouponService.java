@@ -4,6 +4,7 @@ import com.muvent.api.domain.coupon.Coupon;
 import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.Event;
+import com.muvent.api.exception.CouponNotValidException;
 import com.muvent.api.mapper.CouponMapper;
 import com.muvent.api.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,6 @@ public class CouponService {
     }
 
     public Long getCouponDiscount(UUID couponId, LocalDate now) {
-        return couponRepository.findByIdAndValidAfter(couponId, now).orElseThrow(() -> new RuntimeException("Test Coupon"));
+        return couponRepository.findByIdAndValidAfter(couponId, now).orElseThrow(() -> new CouponNotValidException("Coupon not valid!"));
     }
 }

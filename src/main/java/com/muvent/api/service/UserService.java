@@ -4,6 +4,7 @@ import com.muvent.api.domain.user.User;
 import com.muvent.api.domain.user.dto.UserRequestDTO;
 import com.muvent.api.domain.user.dto.UserResponseDTO;
 import com.muvent.api.domain.user.dto.UserUpdateDTO;
+import com.muvent.api.exception.UserNotFoundException;
 import com.muvent.api.mapper.UserMapper;
 import com.muvent.api.repository.UserRepository;
 import com.muvent.api.strategy.userStrategies.EmailSenderProducer;
@@ -46,7 +47,7 @@ public class UserService {
     }
 
     public User findUserById(UUID userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Test Error"));
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import com.muvent.api.domain.orderTicket.dto.OrderTicketRequestDTO;
 import com.muvent.api.domain.orderTicket.dto.OrderTicketResponseDTO;
 import com.muvent.api.domain.ticket.Ticket;
 import com.muvent.api.domain.user.User;
+import com.muvent.api.exception.OrderTicketNotFoundException;
 import com.muvent.api.mapper.OrderTicketMapper;
 import com.muvent.api.repository.OrderTicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class OrderTicketService {
     private final OrderTicketRepository orderTicketRepository;
     private final CouponService couponService;
 
-    public OrderTicketResponseDTO createTicketOrder(Ticket ticketFound, User userFound, OrderTicketRequestDTO orderTicketRequestDTO) {
+    public OrderTicketResponseDTO createOrderTicket(Ticket ticketFound, User userFound, OrderTicketRequestDTO orderTicketRequestDTO) {
         long totalAmount = ticketFound.getPrice() * orderTicketRequestDTO.quantity();
 
         if (orderTicketRequestDTO.couponId() != null) {
@@ -43,7 +44,7 @@ public class OrderTicketService {
     }
 
     private OrderTicket getOrderTicket(UUID orderId) {
-        return orderTicketRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Test OrderTicket"));
+        return orderTicketRepository.findById(orderId).orElseThrow(() -> new OrderTicketNotFoundException("Order ticket not found!"));
     }
 
     public void deleteOrderTicket(UUID orderId) {
