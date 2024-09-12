@@ -13,10 +13,10 @@ public record EventRequestDTO(
         @NotBlank(message = "Description is required")
         String description,
 
-        @NotNull(message = "")
+        @NotNull(message = "Initial date is required")
         Long initialDateTime,
 
-        @NotNull(message = "")
+        @NotNull(message = "Final date is required")
         Long finalDateTime,
 
         MultipartFile image,
@@ -26,8 +26,6 @@ public record EventRequestDTO(
         @NotNull(message = "The event must be remote or personally")
         Boolean remote,
 
-        AddressRequestDTO addressRequestDTO
-
-
+        AddressRequestDTO address
 ) {
 }

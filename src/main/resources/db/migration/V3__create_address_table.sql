@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS tb_address (
     city VARCHAR(150) NOT NULL,
     uf VARCHAR(2) NOT NULL,
     patio VARCHAR(250) NOT NULL,
-    zipCode VARCHAR(8) NOT NULL,
+    zip_code VARCHAR(8) NOT NULL,
     number VARCHAR(10) NOT NULL,
     complement VARCHAR(300),
     event_id UUID,

@@ -2,6 +2,9 @@ package com.muvent.api.exception.handler;
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.muvent.api.exception.enums.ApiError;
+import jakarta.validation.ConstraintViolationException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -93,6 +96,21 @@ public class GlobalExceptionHandler {
             details.put("message", error.getDefaultMessage());
         });
         body.put("errors", details);
+        return body;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Map<String, Map<String, Object>> handle(ConstraintViolationException cve){
+
+        Map<String, Map<String, Object>> body = new HashMap<>();
+        Map<String, Object> description = new HashMap<>();
+
+        cve.getConstraintViolations().forEach((error) -> {
+            description.put("error", error.getMessage());
+        });
+
+        body.put("errors", description);
         return body;
     }
 

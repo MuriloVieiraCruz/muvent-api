@@ -6,18 +6,22 @@ import com.muvent.api.domain.event.Event;
 import com.muvent.api.mapper.AddressMapper;
 import com.muvent.api.repository.AddressRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.executable.ValidateOnExecution;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class AddressService {
 
     private final AddressRepository repository;
 
-    public Address createAddress(Event event, @Valid AddressRequestDTO addressRequestDTO) {
+    public Address createAddress(@Valid AddressRequestDTO addressRequestDTO, Event event) {
         Address address = AddressMapper.toAddress(addressRequestDTO);
         address.setEvent(event);
+
         return repository.save(address);
     }
 }

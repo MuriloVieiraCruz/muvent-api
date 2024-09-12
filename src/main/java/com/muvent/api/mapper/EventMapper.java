@@ -21,8 +21,8 @@ public class EventMapper {
                 .description(eventDTO.description())
                 .imgUrl("")
                 .eventUrl(eventDTO.eventUrl())
-                .initialDate(LocalDateTime.ofInstant(Instant.ofEpochMilli(eventDTO.initialDateTime()), ZoneId.systemDefault()))
-                .finalDate(LocalDateTime.ofInstant(Instant.ofEpochMilli(eventDTO.finalDateTime()), ZoneId.systemDefault()))
+                .initialDate(Instant.ofEpochMilli(eventDTO.initialDateTime()).atZone(ZoneId.systemDefault()).toLocalDateTime())
+                .finalDate(Instant.ofEpochMilli(eventDTO.finalDateTime()).atZone(ZoneId.systemDefault()).toLocalDateTime())
                 .remote(eventDTO.remote())
                 .build();
     }
@@ -38,8 +38,7 @@ public class EventMapper {
                 event.getImgUrl(),
                 event.getEventUrl(),
                 event.getRemote(),
-                event.getAddress() != null ? event.getAddress().getCity() : "",
-                event.getAddress() != null ? event.getAddress().getUf() : ""
+                event.getAddress() != null ? AddressMapper.toAddressResponse(event.getAddress()) : null
         );
     }
 

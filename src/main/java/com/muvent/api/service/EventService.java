@@ -59,7 +59,7 @@ public class EventService {
         Event response = repository.save(event);
 
         if (!eventDTO.remote()) {
-            event.setAddress(addressService.createAddress(event, eventDTO.addressRequestDTO()));
+            event.setAddress(addressService.createAddress(eventDTO.address(), event));
         }
 
         return EventMapper.toEventResponse(response);
