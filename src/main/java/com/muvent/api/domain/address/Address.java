@@ -2,7 +2,8 @@ package com.muvent.api.domain.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.muvent.api.domain.BaseEntity;
-import com.muvent.api.domain.event.Event;
+import com.muvent.api.domain.geolocalization.GeoLocalization;
+import com.muvent.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,8 +27,11 @@ public class Address extends BaseEntity implements Serializable {
     private String number;
     private String complement;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
+    @OneToOne
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    private Event event;
+    private User user;
+
+    @Embedded
+    private GeoLocalization geoLocalization;
 }

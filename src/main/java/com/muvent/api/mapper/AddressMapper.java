@@ -18,7 +18,6 @@ public class AddressMapper {
                 .zipCode(addressRequestDTO.zipCode())
                 .number(addressRequestDTO.number())
                 .complement(addressRequestDTO.complement())
-                .event(new Event())
                 .build();
     }
 

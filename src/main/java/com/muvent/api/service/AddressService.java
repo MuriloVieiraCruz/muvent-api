@@ -20,7 +20,6 @@ public class AddressService {
 
     public Address createAddress(@Valid AddressRequestDTO addressRequestDTO, Event event) {
         Address address = AddressMapper.toAddress(addressRequestDTO);
-        address.setEvent(event);
 
         return repository.save(address);
     }

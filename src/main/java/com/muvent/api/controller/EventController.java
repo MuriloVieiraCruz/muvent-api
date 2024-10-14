@@ -49,6 +49,11 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(service.getFilteredEvents(eventFilterDTO));
     }
 
+//    @GetMapping()
+//    public ResponseEntity<?> getEventsNearMe() {
+//        return ResponseEntity.status(HttpStatus.OK).body();
+//    }
+
     @PostMapping("/coupon/{eventId}")
     public ResponseEntity<CouponResponseDTO> createCoupon(@PathVariable UUID eventId, @RequestBody CouponRequestDTO couponRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createCouponByEventId(eventId, couponRequestDTO));

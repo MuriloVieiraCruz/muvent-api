@@ -1,7 +1,7 @@
 package com.muvent.api.domain.event;
 
 import com.muvent.api.domain.BaseEntity;
-import com.muvent.api.domain.address.Address;
+import com.muvent.api.domain.geolocalization.GeoLocalization;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +25,8 @@ public class Event extends BaseEntity implements Serializable {
     private Boolean remote;
     private LocalDateTime initialDate;
     private LocalDateTime finalDate;
+    private String address;
 
-    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
-    private Address address;
+    @Embedded
+    private GeoLocalization geoLocalization;
 }

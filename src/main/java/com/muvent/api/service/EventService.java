@@ -7,6 +7,8 @@ import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
 import com.muvent.api.domain.event.dto.EventFilterDTO;
 import com.muvent.api.domain.event.dto.EventRequestDTO;
 import com.muvent.api.domain.event.dto.EventResponseDTO;
+import com.muvent.api.domain.geolocalization.GeoLocalization;
+import com.muvent.api.domain.restTemplateDTO.NominatimResponseDTO;
 import com.muvent.api.exception.EventImageBucketException;
 import com.muvent.api.exception.EventNotFoundException;
 import com.muvent.api.mapper.CouponMapper;
@@ -18,7 +20,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -30,7 +34,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -40,10 +46,13 @@ public class EventService {
     @Value("${aws.bucket.name}")
     private String bucketName;
 
+    @Value("${url.nominatim}")
+    private String nominatimUrl;
+
     private final S3Client s3Client;
     private final EventRepository repository;
-    private final AddressService addressService;
     private final CouponService couponService;
+    private final RestTemplate restTemplate;
 
     @Transient
     public EventResponseDTO createEvent(EventRequestDTO eventDTO) {
@@ -56,12 +65,14 @@ public class EventService {
         Event event = EventMapper.toEvent(eventDTO);
         event.setImgUrl(imgUrl);
 
-        Event response = repository.save(event);
-
         if (!eventDTO.remote()) {
-            event.setAddress(addressService.createAddress(eventDTO.address(), event));
+            event.setGeoLocalization(searchLatAndLon(eventDTO));
+            event.setAddress(eventDTO.zipCode()
+                    + "-" + eventDTO.neighborhood()
+                    + "-" + eventDTO.city());
         }
 
+        Event response = repository.save(event);
         return EventMapper.toEventResponse(response);
     }
 
@@ -99,10 +110,10 @@ public class EventService {
 
         Pageable pageable = PageRequest.of(eventFilterDTO.page(), eventFilterDTO.size());
         Page<Event> eventPage = repository.findFilteredEvents(
-                eventFilterDTO.title(), eventFilterDTO.city(), eventFilterDTO.uf(), startDate, endDate, pageable
+                eventFilterDTO.title(), startDate, endDate, pageable
         );
 
-        return eventPage.stream().parallel()
+        return eventPage.stream()
                 .map(EventMapper::toEventResponse)
                 .toList();
     }
@@ -132,6 +143,22 @@ public class EventService {
         } catch (IOException e) {
             throw new EventImageBucketException(e.getMessage());
         }
+    }
+
+    private GeoLocalization searchLatAndLon(EventRequestDTO eventDTO) {
+        ResponseEntity<NominatimResponseDTO[]> response = restTemplate.getForEntity(formatUrl(nominatimUrl, eventDTO), NominatimResponseDTO[].class);
+        List<NominatimResponseDTO> responseList = List.of(Objects.requireNonNull(response.getBody()));
+        NominatimResponseDTO nrDTO = responseList.getFirst();
+        return new GeoLocalization(Double.parseDouble(nrDTO.getLat()), Double.parseDouble(nrDTO.getLon()));
+    }
+
+    private String formatUrl(String url, EventRequestDTO eventDTO) {
+        return (url + eventDTO.zipCode()
+                + ","
+                + eventDTO.neighborhood()
+                + ","
+                + eventDTO.city()
+                + "&format=json");
     }
 
 }

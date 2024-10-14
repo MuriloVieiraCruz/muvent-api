@@ -1,12 +1,14 @@
 services:
   postgres:
     container_name: muvent_db
-    image: postgres
+    image: postgis/postgis:17-3.4
     environment:
       POSTGRES_USER: usermv
       POSTGRES_PASSWORD: test123
       POSTGRES_DB: muvent
       PG_DATA: /data/postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5433:5432"
     restart: unless-stopped
@@ -68,5 +70,7 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
 
 volumes:
+  postgres_data:
+    driver: local
   redis-data:
     driver: local

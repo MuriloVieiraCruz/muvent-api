@@ -16,6 +16,8 @@ public record EventResponseDTO  (
         String imgUrl,
         String eventUrl,
         Boolean remote,
-        AddressResponseDTO addressResponseDTO
+        String address,
+        double latitude,
+        double longitude
 ) implements Serializable {
 }

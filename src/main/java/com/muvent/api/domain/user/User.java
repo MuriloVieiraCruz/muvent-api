@@ -1,8 +1,7 @@
 package com.muvent.api.domain.user;
 
 import com.muvent.api.domain.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;

@@ -38,7 +38,9 @@ public class EventMapper {
                 event.getImgUrl(),
                 event.getEventUrl(),
                 event.getRemote(),
-                event.getAddress() != null ? AddressMapper.toAddressResponse(event.getAddress()) : null
+                event.getAddress(),
+                event.getGeoLocalization().getLatitude(),
+                event.getGeoLocalization().getLongitude()
         );
     }
 
@@ -52,8 +54,7 @@ public class EventMapper {
                 event.getImgUrl(),
                 event.getEventUrl(),
                 event.getRemote(),
-                event.getAddress() != null ? event.getAddress().getCity() : "",
-                event.getAddress() != null ? event.getAddress().getUf() : "",
+                event.getAddress() != null ? event.getAddress() : "",
                 new ArrayList<>()
         );
     }

@@ -124,6 +124,12 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-spatial</artifactId>
+			<version>6.6.1.Final</version>
+			<type>pom</type>
+		</dependency>
 
 		<!-- Config -->
 		<dependency>

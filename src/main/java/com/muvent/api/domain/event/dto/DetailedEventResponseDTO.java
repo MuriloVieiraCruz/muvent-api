@@ -14,8 +14,7 @@ public record DetailedEventResponseDTO(
         String image,
         String eventUrl,
         Boolean remote,
-        String city,
-        String uf,
+        String address,
         List<CouponResponseDTO> couponResponse
 ) {
 }
