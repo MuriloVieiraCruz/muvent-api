@@ -1,5 +1,6 @@
 package com.muvent.api.controller;
 
+import com.muvent.api.controller.documentation.UserControllerDocumentation;
 import com.muvent.api.domain.user.dto.UserRequestDTO;
 import com.muvent.api.domain.user.dto.UserResponseDTO;
 import com.muvent.api.domain.user.dto.UserUpdateDTO;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserControllerDocumentation {
 
     private final UserService userService;
 

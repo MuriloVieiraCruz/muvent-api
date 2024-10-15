@@ -1,5 +1,6 @@
 package com.muvent.api.controller;
 
+import com.muvent.api.controller.documentation.EventControllerDocumentation;
 import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.dto.*;
@@ -17,13 +18,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/events")
 @RequiredArgsConstructor
-public class EventController {
+public class EventController implements EventControllerDocumentation {
 
     private final EventService service;
 
     @PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<EventResponseDTO> create(
-            @ModelAttribute @Valid EventRequestDTO eventRequestDTO
+             @ModelAttribute @Valid EventRequestDTO eventRequestDTO
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createEvent(eventRequestDTO));
     }
