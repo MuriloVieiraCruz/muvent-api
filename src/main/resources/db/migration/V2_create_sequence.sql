@@ -1,0 +1,1 @@
+CREATE INDEX idx_event_location ON tb_event USING GIST (location);

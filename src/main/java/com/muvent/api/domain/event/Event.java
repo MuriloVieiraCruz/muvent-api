@@ -1,9 +1,9 @@
 package com.muvent.api.domain.event;
 
 import com.muvent.api.domain.BaseEntity;
-import com.muvent.api.domain.geolocalization.GeoLocalization;
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -27,6 +27,6 @@ public class Event extends BaseEntity implements Serializable {
     private LocalDateTime finalDate;
     private String address;
 
-    @Embedded
-    private GeoLocalization geoLocalization;
+    @Column(columnDefinition = "Geometry")
+    private Point location;
 }

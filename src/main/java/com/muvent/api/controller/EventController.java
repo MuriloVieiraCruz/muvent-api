@@ -2,10 +2,7 @@ package com.muvent.api.controller;
 
 import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
-import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
-import com.muvent.api.domain.event.dto.EventFilterDTO;
-import com.muvent.api.domain.event.dto.EventRequestDTO;
-import com.muvent.api.domain.event.dto.EventResponseDTO;
+import com.muvent.api.domain.event.dto.*;
 import com.muvent.api.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,10 +46,10 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(service.getFilteredEvents(eventFilterDTO));
     }
 
-//    @GetMapping()
-//    public ResponseEntity<?> getEventsNearMe() {
-//        return ResponseEntity.status(HttpStatus.OK).body();
-//    }
+    @GetMapping("/filter/events-nearby")
+    public ResponseEntity<List<EventResponseDTO>> getNearbyEvents(@RequestBody @Valid LocationDTO locationDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getNearbyEvents(locationDTO));
+    }
 
     @PostMapping("/coupon/{eventId}")
     public ResponseEntity<CouponResponseDTO> createCoupon(@PathVariable UUID eventId, @RequestBody CouponRequestDTO couponRequestDTO) {

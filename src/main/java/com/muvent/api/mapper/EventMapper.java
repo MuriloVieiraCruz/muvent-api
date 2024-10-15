@@ -38,9 +38,7 @@ public class EventMapper {
                 event.getImgUrl(),
                 event.getEventUrl(),
                 event.getRemote(),
-                event.getAddress(),
-                event.getGeoLocalization().getLatitude(),
-                event.getGeoLocalization().getLongitude()
+                event.getAddress()
         );
     }
 

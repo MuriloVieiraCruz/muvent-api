@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -26,5 +27,14 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable
+    );
+
+    @Query(value = "SELECT * FROM tb_event e "
+            + "WHERE ST_DWithin(e.location::geography, "
+            + "ST_SetSRID(ST_MakePoint(:latitude, :longitude), 4326)::geography, :radius)", nativeQuery = true)
+    List<Event> findEventsWithinRadius(
+            @Param("longitude") double longitude,
+            @Param("latitude") double latitude,
+            @Param("radius") double radius
     );
 }

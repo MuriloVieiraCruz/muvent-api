@@ -1,11 +1,13 @@
 package com.muvent.api.domain.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.muvent.api.domain.BaseEntity;
-import com.muvent.api.domain.geolocalization.GeoLocalization;
 import com.muvent.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
 
 import java.io.Serializable;
 
@@ -32,6 +34,6 @@ public class Address extends BaseEntity implements Serializable {
     @JsonIgnore
     private User user;
 
-    @Embedded
-    private GeoLocalization geoLocalization;
+    @Column(columnDefinition = "Geometry")
+    private Point location;
 }

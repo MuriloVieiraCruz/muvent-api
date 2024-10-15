@@ -3,11 +3,7 @@ package com.muvent.api.service;
 import com.muvent.api.domain.coupon.dto.CouponRequestDTO;
 import com.muvent.api.domain.coupon.dto.CouponResponseDTO;
 import com.muvent.api.domain.event.Event;
-import com.muvent.api.domain.event.dto.DetailedEventResponseDTO;
-import com.muvent.api.domain.event.dto.EventFilterDTO;
-import com.muvent.api.domain.event.dto.EventRequestDTO;
-import com.muvent.api.domain.event.dto.EventResponseDTO;
-import com.muvent.api.domain.geolocalization.GeoLocalization;
+import com.muvent.api.domain.event.dto.*;
 import com.muvent.api.domain.restTemplateDTO.NominatimResponseDTO;
 import com.muvent.api.exception.EventImageBucketException;
 import com.muvent.api.exception.EventNotFoundException;
@@ -15,6 +11,10 @@ import com.muvent.api.mapper.CouponMapper;
 import com.muvent.api.mapper.EventMapper;
 import com.muvent.api.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -54,6 +54,8 @@ public class EventService {
     private final CouponService couponService;
     private final RestTemplate restTemplate;
 
+    private static final double MINIMUM_KILOMETER = 20000;
+
     @Transient
     public EventResponseDTO createEvent(EventRequestDTO eventDTO) {
         String imgUrl = null;
@@ -66,7 +68,7 @@ public class EventService {
         event.setImgUrl(imgUrl);
 
         if (!eventDTO.remote()) {
-            event.setGeoLocalization(searchLatAndLon(eventDTO));
+            event.setLocation(searchLatAndLon(eventDTO));
             event.setAddress(eventDTO.zipCode()
                     + "-" + eventDTO.neighborhood()
                     + "-" + eventDTO.city());
@@ -118,6 +120,23 @@ public class EventService {
                 .toList();
     }
 
+    public List<EventResponseDTO> getNearbyEvents(LocationDTO locationDTO) {
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point userLocation = geometryFactory.createPoint(new Coordinate(locationDTO.longitude(), locationDTO.latitude()));
+
+        return findEventsNear(userLocation, locationDTO.radius()).stream()
+                .map(EventMapper::toEventResponse)
+                .toList();
+    }
+
+    private List<Event> findEventsNear(Point userLocation, double radius) {
+        if (radius <= 0D) {
+            radius = MINIMUM_KILOMETER;
+        }
+
+        return repository.findEventsWithinRadius(userLocation.getX(), userLocation.getY(), radius);
+    }
+
     public CouponResponseDTO createCouponByEventId(UUID eventId, CouponRequestDTO couponRequestDTO) {
         Event event = this.findEventById(eventId);
         return CouponMapper.toCouponResponse(couponService.createCoupon(event, couponRequestDTO));
@@ -145,14 +164,16 @@ public class EventService {
         }
     }
 
-    private GeoLocalization searchLatAndLon(EventRequestDTO eventDTO) {
+    private Point searchLatAndLon(EventRequestDTO eventDTO) {
         ResponseEntity<NominatimResponseDTO[]> response = restTemplate.getForEntity(formatUrl(nominatimUrl, eventDTO), NominatimResponseDTO[].class);
         List<NominatimResponseDTO> responseList = List.of(Objects.requireNonNull(response.getBody()));
         NominatimResponseDTO nrDTO = responseList.getFirst();
-        return new GeoLocalization(Double.parseDouble(nrDTO.getLat()), Double.parseDouble(nrDTO.getLon()));
+        GeometryFactory geometryFactory = new GeometryFactory();
+        return geometryFactory.createPoint(new Coordinate(Double.parseDouble(nrDTO.getLat()), Double.parseDouble(nrDTO.getLon())));
     }
 
     private String formatUrl(String url, EventRequestDTO eventDTO) {
+
         return (url + eventDTO.zipCode()
                 + ","
                 + eventDTO.neighborhood()
